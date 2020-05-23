@@ -66,7 +66,6 @@ h1,h2,h3,h4,h5,h6{
 
 .cart-row{
 	display: flex;
-    align-items: flex-stretch;
     padding-bottom: 10px;
     margin-bottom: 10px;
     border-bottom: 1px solid #ececec;
@@ -97,3 +96,18 @@ h1,h2,h3,h4,h5,h6{
 .hidden{
 	display: none!important;
 }
+
+
+        /* Media query for mobile viewport */
+@media screen and (max-width: 400px) {
+	#paypal-button-container {
+                width: 100%;
+            }
+        }
+
+        /* Media query for desktop viewport */
+@media screen and (min-width: 400px) {
+            #paypal-button-container {
+                width: 250px;
+            }
+        }

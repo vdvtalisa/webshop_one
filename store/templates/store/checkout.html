@@ -4,6 +4,9 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="box-element" id="form-wrapper">
+                {% if request.user.is_authenticated %}
+                <strong>Name:</strong><p>{{ customer.name }}</p><strong>Email:</strong><p>{{ customer.email }}</p>
+                {% endif %}
                 <form id="form">
                     <div id="user-info">
                         <div class="form-field">
@@ -38,6 +41,7 @@
             <br>
             <div class="box-element hidden" id="payment-info">
                 <small>Paypal Options</small>
+                <div id="paypal-button-container"></div>
                 <button id="make-payment" class="btn btn-success">Make payment</button>
             </div>
         </div>
@@ -61,9 +65,39 @@
             </div>
         </div>
     </div>
+        <!-- Include the PayPal JavaScript SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AXHJKmc89uc_5s96MxMmoJnTL6g-T8xbO49mMjtHppjEgp2a6DxXYIEHjntzdcAyeVxrlL8XETy4uTSU&currency=EUR"></script>
+
+    <script>
+        let total = '{{order.get_cart_total}}'
+
+            // Render the PayPal button into #paypal-button-container
+        paypal.Buttons({
+                // Set up the transaction
+            // Set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: parseFloat(total).toFixed(2)
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    // Show a success message to the buyer
+                    submitFormData()
+                });
+            }
+            }
+        ).render('#paypal-button-container');
+    </script>
+
     <script type="text/javascript">
         let shipping = '{{ order.shipping }}'
-        let total ='{{ order.get_cart_total }}'
 
         if (shipping === 'False') {
             document.getElementById('shipping-info').innerHTML = ''
@@ -130,6 +164,10 @@
                 .then((data) => {
                     console.log("Success:",data)
                     alert('Transaction completed')
+
+                    cart = {}
+                    document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
                     window.location.href = "{% url 'store' %}"
                 })
         }

@@ -10,7 +10,7 @@
     <script type="text/javascript">
         const user = '{{ request.user }}'
 
-        function getCookie(name) {
+        function getToken(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 const cookies = document.cookie.split(';');
@@ -25,7 +25,36 @@
             }
             return cookieValue;
         }
-        const csrftoken = getCookie('csrftoken');
+        const csrftoken = getToken('csrftoken');
+
+        function getCookie(name) {
+            //Split cookie string and get all individual name-value pairs in an array
+            const cookieArr = document.cookie.split(";");
+
+            //Loop through the array elements
+            for(let i = 0; i < cookieArr.length; i++) {
+                let cookiePair = cookieArr[i].split("=");
+                //Remove whitespace at beginning name and compare with given string
+                if(name === cookiePair[0].trim()) {
+                    //Decode the cookie value and return
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+
+            // Return null if not found
+            return null;
+        }
+
+        let cart = JSON.parse(getCookie('cart'));
+
+        if(cart === null) {
+            cart = {}
+            console.log('Cart was created')
+            document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+            location.reload()
+        }
+
+        console.log('Cart:', cart);
     </script>
 </head>
 <body>
@@ -44,7 +73,7 @@
     <div class="form-inline my-2 my-lg-0">
         <a href="#"class="btn btn-warning">Login</a>
         <a href="{% url 'cart' %}"><img  id="cart-icon" src="{% static 'images/6+cart.png' %}"></a>
-        <p id="cart-total">{{ cartItems }}</p>
+        <p id="cart-total">{{ cart_items }}</p>
     </div>
   </div>
 </nav>
