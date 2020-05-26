@@ -2,4 +2,6 @@
 
 E-commerce site, created using Django 3.0.5.
 
-It is now live: https://practicewebshop.herokuapp.com/
+Deployed on: https://practicewebshop.herokuapp.com/
+
+(Note: host images on AWS S3 to display images)
